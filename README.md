@@ -41,14 +41,14 @@ Cliente → API Gateway → Lambda (VPC) → Redis ─ HIT  → Respuesta inmedi
 .
 |-- versions.tf  variables.tf  outputs.tf  terraform.tfvars.example
 |-- network.tf          VPC, subnets, Internet Gateway, NAT, rutas y VPC Endpoint de S3
-|-- security_groups.tf  Security Groups de Lambda y de Redis
-|-- redis.tf            Subnet Group y ElastiCache Redis
-|-- s3.tf               Bucket, bloqueo de acceso publico, versionado y bucket policy
-|-- iam.tf              Rol de la Lambda con minimo privilegio
-|-- lambda.tf           Funcion Lambda y su grupo de logs
+|-- security_groups.tf  security Groups de Lambda y de Redis
+|-- redis.tf            subnet Group y ElastiCache Redis
+|-- s3.tf               bucket, bloqueo de acceso publico, versionado y bucket policy
+|-- iam.tf              rol de la Lambda con minimo privilegio
+|-- lambda.tf           funcion Lambda y su grupo de logs
 |-- api_gateway.tf      HTTP API, ruta, stage, throttling, CORS y logs de acceso
-|-- lambda/             Codigo de la Lambda (Python 3.12) y pruebas unitarias
-|-- scripts/            Scripts (Linux y Windows) para generar X-Cache: MISS y X-Cache: HIT 
+|-- lambda/             codigo de la Lambda (Python 3.12) y pruebas unitarias
+|-- scripts/            scripts (Linux y Windows) para generar X-Cache: MISS y X-Cache: HIT 
 `-- evidence/           X-Cache: MISS y X-Cache: HIT y opcionables
 ```
 

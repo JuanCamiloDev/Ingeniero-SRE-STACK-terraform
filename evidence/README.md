@@ -1,4 +1,4 @@
-# Respuestas de prueba
+# Respuestas de prueba del script
 
 Esta carpeta se llena ejecutando:
 
@@ -14,4 +14,4 @@ Genera:
 | `02_request_2_HIT.txt` | Misma llamada repetida: cabecera `X-Cache: HIT` |
 | `03_s3_ls.txt` | Salida de `aws s3 ls` con el objeto bajo `results/` |
 
-> Los archivos de evidencia **solo existen cuando se despliega en una cuenta AWS real**
+> Los archivos de evidencia **se generan cuando se despliega en una cuenta AWS**
