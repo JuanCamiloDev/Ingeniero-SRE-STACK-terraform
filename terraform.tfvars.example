@@ -1,0 +1,20 @@
+# Copia este archivo a terraform.tfvars y ajusta los valores.
+aws_region   = "us-east-1"
+project_name = "sre-cache"
+environment  = "dev"
+
+# true = 1 NAT Gateway (~$32/mes si queda encendido). false = 1 por AZ (alta disponibilidad, el doble de costo).
+single_nat_gateway = true
+
+redis_node_type   = "cache.t3.micro"
+cache_ttl_seconds = 60
+
+# Throttling del stage del API
+api_throttling_rate_limit  = 50
+api_throttling_burst_limit = 100
+
+# Necesario para poder ejecutar `aws s3 ls` y capturar la evidencia.
+# Usa TU ARN (aws sts get-caller-identity --query Arn). Si usas un rol asumido, pon el ARN del ROL.
+s3_admin_principal_arns = [
+  # "arn:aws:iam::123456789012:user/tu-usuario",
+]

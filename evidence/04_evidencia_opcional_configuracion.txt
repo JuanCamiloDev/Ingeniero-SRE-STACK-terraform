@@ -1,0 +1,73 @@
+﻿EVIDENCIA OPCIONAL - Verificación de la configuración - 2026-10-11T11:55:26
+
+=== 1. S3 privado - Block Public Access, las 4 opciones deben estar en true ===
+{
+    "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "IgnorePublicAcls": true,
+        "BlockPublicPolicy": true,
+        "RestrictPublicBuckets": true
+    }
+}
+
+=== 2. S3 - versionado habilitado ===
+{
+    "Status": "Enabled"
+}
+
+=== 3. S3 - bucket policy restringida al rol de Lambda ===
+{"Version":"2012-10-17","Statement":[{"Sid":"AllowLambdaRole","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::094983223441:role/sre-cache-lambda-role"},"Action":["s3:PutObject","s3:GetObject"],"Resource":"arn:aws:s3:::sre-cache-results-094983223441-us-east-1/results/*"},{"Sid":"AllowLambdaRoleList","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::094983223441:role/sre-cache-lambda-role"},"Action":"s3:ListBucket","Resource":"arn:aws:s3:::sre-cache-results-094983223441-us-east-1"},{"Sid":"DenyObjectAccessExceptLambdaAndAdmins","Effect":"Deny","Principal":"*","Action":["s3:PutObject","s3:ListBucket","s3:GetObject","s3:DeleteObject"],"Resource":["arn:aws:s3:::sre-cache-results-094983223441-us-east-1/*","arn:aws:s3:::sre-cache-results-094983223441-us-east-1"],"Condition":{"ArnNotEquals":{"aws:PrincipalArn":["arn:aws:iam::094983223441:role/sre-cache-lambda-role","arn:aws:iam::094983223441:user/terraform-deployer"]}}},{"Sid":"DenyLambdaOutsideVpcEndpoint","Effect":"Deny","Principal":{"AWS":"arn:aws:iam::094983223441:role/sre-cache-lambda-role"},"Action":"s3:*","Resource":["arn:aws:s3:::sre-cache-results-094983223441-us-east-1/*","arn:aws:s3:::sre-cache-results-094983223441-us-east-1"],"Condition":{"StringNotEquals":{"aws:SourceVpce":"vpce-050902340662f41dd"}}},{"Sid":"DenyInsecureTransport","Effect":"Deny","Principal":"*","Action":"s3:*","Resource":["arn:aws:s3:::sre-cache-results-094983223441-us-east-1/*","arn:aws:s3:::sre-cache-results-094983223441-us-east-1"],"Condition":{"Bool":{"aws:SecureTransport":"false"}}}]}
+
+=== 4. Lambda desplegada en subnets privadas ===
+{
+    "SubnetIds": [
+        "subnet-09edb879627d963e2",
+        "subnet-0684a0b88eb8165fd"
+    ],
+    "SecurityGroupIds": [
+        "sg-0a89b1d924a441fbe"
+    ],
+    "VpcId": "vpc-08de34aeab659c7bb",
+    "Ipv6AllowedForDualStack": false
+}
+
+=== 5. Redis - acceso solo desde Lambda ===
+[
+    {
+        "IpProtocol": "tcp",
+        "FromPort": 6379,
+        "ToPort": 6379,
+        "UserIdGroupPairs": [
+            {
+                "Description": "Redis acepta solo desde el SG de Lambda",
+                "UserId": "094983223441",
+                "GroupId": "sg-0a89b1d924a441fbe"
+            }
+        ],
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "PrefixListIds": []
+    }
+]
+
+=== 6. API - throttling y logs ===
+{
+    "Throttling": {
+        "DetailedMetricsEnabled": false,
+        "ThrottlingBurstLimit": 100,
+        "ThrottlingRateLimit": 50.0
+    },
+    "AccessLogs": "arn:aws:logs:us-east-1:094983223441:log-group:/aws/apigateway/sre-cache-access"
+}
+
+=== 7. API - CORS ===
+HTTP/1.1 204 No Content
+Date: Sun, 11 Oct 2026 16:55:35 GMT
+Connection: keep-alive
+access-control-allow-origin: *
+access-control-allow-methods: OPTIONS,POST
+access-control-allow-headers: authorization,content-type
+access-control-max-age: 300
+apigw-requestid: FFrdRiq0IAMEYjQ=
+
+
